@@ -21,5 +21,11 @@ namespace WebStore.UI.Areas.Admin.Controllers
         {
             return View(await _applicationDbContext.Category.ToListAsync());
         }
+
+        //GET - CREATE
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }
