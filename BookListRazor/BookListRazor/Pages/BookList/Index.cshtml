@@ -24,6 +24,9 @@
                             <label asp-for="Books.FirstOrDefault().Author"></label>
                         </th>
                         <th>
+                            <label asp-for="Books.FirstOrDefault().ISBN"></label>
+                        </th>
+                        <th>
 
                         </th>
                     </tr>
@@ -35,6 +38,9 @@
                             </td>
                             <td>
                                 @Html.DisplayFor(m => item.Author)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.ISBN)
                             </td>
                             <td>
                                 <button class="btn btn-danger btn-sm">Delete</button>
