@@ -80,5 +80,20 @@ namespace WebStore.UI.Areas.Admin.Controllers
                 return NotFound();
             return View(category);
         }
+
+        //POST - DELETE
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            if (id == null)
+                return NotFound();
+            var category = await _applicationDbContext.Category.FindAsync(id);
+            if (category == null)
+                return View();
+            _applicationDbContext.Category.Remove(category);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
