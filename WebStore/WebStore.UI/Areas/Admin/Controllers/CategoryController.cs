@@ -54,5 +54,20 @@ namespace WebStore.UI.Areas.Admin.Controllers
                 return NotFound();
             return View(category);
         }
+
+        //POST - EDIT
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _applicationDbContext.Update(category);
+                await _applicationDbContext.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(category);
+        }
     }
 }
