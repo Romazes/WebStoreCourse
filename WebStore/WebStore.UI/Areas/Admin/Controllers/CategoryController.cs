@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using WebStore.UI.Data;
+using WebStore.UI.Models;
 
 namespace WebStore.UI.Areas.Admin.Controllers
 {
@@ -26,6 +27,21 @@ namespace WebStore.UI.Areas.Admin.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        //POST - CREATE
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                //if valid
+                _applicationDbContext.Category.Add(category);
+                await _applicationDbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(category);
         }
     }
 }
