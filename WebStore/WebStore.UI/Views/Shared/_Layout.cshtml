@@ -21,12 +21,15 @@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item dropdown text-white-50">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuLink"
-                               role="button" data-toggle="dropdown" aria-haspopup="true" 
+                               role="button" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
                                 Content Management
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropDownMenuLink">
-                                <a class="dropdown-item">Category</a>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Category"
+                                   asp-action="Index ">
+                                    Category
+                                </a>
                                 <a class="dropdown-item">Sub Category</a>
                                 <a class="dropdown-item">MenuItem</a>
                                 <a class="dropdown-item">Coupons</a>
