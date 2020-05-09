@@ -17,7 +17,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
             _applicationDbContext = applicationDbContext;
         }
         
-        //GET
+        //GET - INDEX
         public async Task<IActionResult> Index()
         {
             return View(await _applicationDbContext.Category.ToListAsync());
