@@ -118,7 +118,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
         //POST - EDIT
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, SubCategoryAndCategoryViewModel model)
+        public async Task<IActionResult> Edit(SubCategoryAndCategoryViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -132,8 +132,8 @@ namespace WebStore.UI.Areas.Admin.Controllers
                         + " category. Please use another name.";
                 }
                 else
-                {
-                    var subCategoryFromDb = await _applicationDbContext.SubCategory.FindAsync(id);
+                { 
+                    var subCategoryFromDb = await _applicationDbContext.SubCategory.FindAsync(model.SubCategory.Id);
                     subCategoryFromDb.Name = model.SubCategory.Name;
                     await _applicationDbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
