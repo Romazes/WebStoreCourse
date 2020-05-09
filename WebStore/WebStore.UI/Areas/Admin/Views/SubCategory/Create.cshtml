@@ -8,7 +8,7 @@
 <h2 class="text-info">Create Sub Category</h2>
 <br />
 
-<partial name="_StatusMessage" model="Model.StatusMessage"/>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
 
 <div class="border backgroundWhite row">
     <div class="col-8 border-right">
@@ -43,7 +43,7 @@
 
     </div>
     <div class="col-3 offset-1">
-        @if(Model.SubCategoryList.Count() > 0)
+        @if (Model.SubCategoryList.Count() > 0)
         {
             <p> Existing SubCategories: </p>
             <div id="SubCategoryList">
@@ -52,3 +52,38 @@
         }
     </div>
 </div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function updateSubCategoryList() {
+            var categorySelected = document.getElementById("ddlCategorylist").value;
+
+            $list = $('#SubCategoryList');
+
+            $.ajax({
+                url: '/Admin/SubCategory/GetSubCategory/' + categorySelected,
+                type: 'GET',
+                dataType: 'text',
+                success: function (data) {
+                    results = JSON.parse(data);
+                    $list.html('');
+                    $list.append(' <ul class="list-group"> ');
+                    for (i in results) {
+                        $list.append('<li class="list-group-item">' + results[i].text + '</li>');
+                    }
+                    $list.append('</ul>');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            updateSubCategoryList();
+        });
+
+        $("#ddlCategorylist").on("change", function () {
+            updateSubCategoryList();
+        });
+
+    </script>
+}
