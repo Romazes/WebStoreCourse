@@ -11,7 +11,7 @@ namespace WebStore.UI.Models
         [Required, Display(Name = "SubCategory Name")]
         public string Name { get; set; }
 
-        [Display(Name = "Category")]
+        [Required, Display(Name = "Category")]
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
