@@ -133,7 +133,8 @@ namespace WebStore.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    _applicationDbContext.SubCategory.Add(model.SubCategory);
+                    var subCategoryFromDb = await _applicationDbContext.SubCategory.FindAsync(id);
+                    subCategoryFromDb.Name = model.SubCategory.Name;
                     await _applicationDbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
