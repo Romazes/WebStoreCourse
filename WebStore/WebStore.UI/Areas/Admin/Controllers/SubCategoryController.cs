@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebStore.UI.Data;
+using WebStore.UI.Models;
 using WebStore.UI.Models.ViewModels;
 
 namespace WebStore.UI.Areas.Admin.Controllers
@@ -36,7 +38,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
             SubCategoryAndCategoryViewModel model = new SubCategoryAndCategoryViewModel()
             {
                 CategoryList = await _applicationDbContext.Category.ToListAsync(),
-                SubCategory = new Models.SubCategory(),
+                SubCategory = new SubCategory(),
                 SubCategoryList = await _applicationDbContext.SubCategory.OrderBy(n => n.Name)
                     .Select(n => n.Name).Distinct().ToListAsync()
             };
@@ -77,6 +79,17 @@ namespace WebStore.UI.Areas.Admin.Controllers
             };
 
             return View(modelVM);
+        }
+
+         [ActionName("GetSubCategory")]
+         public async Task<IActionResult> GetSubCategory(int id)
+        {
+            List<SubCategory> subCategories = new List<SubCategory>();
+
+            subCategories = await (from subCategory in _applicationDbContext.SubCategory
+                             where subCategory.CategoryId == id
+                             select subCategory).ToListAsync();
+            return Json(new SelectList(subCategories, "Id", "Name"));
         }
     }
 }
