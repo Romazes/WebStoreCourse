@@ -40,5 +40,37 @@ namespace WebStore.UI.Areas.Admin.Controllers
 
             return View(model);
         }
+
+        //POST - CREATE
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(SubCategoryAndCategoryViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var doesSubCategoryExists = _applicationDbContext.SubCategory.Include(c => c.Category)
+                    .Where(n => n.Name == model.SubCategory.Name && n.Category.Id == model.SubCategory.CategoryId);
+
+                if(doesSubCategoryExists.Count() > 0)
+                {
+                    //Error
+                }
+                else
+                {
+                    _applicationDbContext.SubCategory.Add(model.SubCategory);
+                    await _applicationDbContext.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            SubCategoryAndCategoryViewModel modelVM = new SubCategoryAndCategoryViewModel()
+            {
+                CategoryList = await _applicationDbContext.Category.ToListAsync(),
+                SubCategory = model.SubCategory,
+                SubCategoryList = await _applicationDbContext.SubCategory.OrderBy(n => n.Name)
+                    .Select(n => n.Name).ToListAsync()
+            };
+
+            return View(modelVM);
+        }
     }
 }
