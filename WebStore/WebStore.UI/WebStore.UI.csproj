@@ -5,6 +5,15 @@
     <UserSecretsId>aspnet-WebStore.UI-8F4064EE-7C40-4866-83FD-0609BA02B15B</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200509203236_AddMenuItemToDatabase.cs" />
+    <Compile Remove="Data\Migrations\20200509203236_AddMenuItemToDatabase.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200509203657_AddMenuItemToDatabase.cs" />
+    <Compile Remove="Data\Migrations\20200509203657_AddMenuItemToDatabase.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200509204656_AddMenuItemToDatabase.cs" />
+    <Compile Remove="Data\Migrations\20200509204656_AddMenuItemToDatabase.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.3" />
