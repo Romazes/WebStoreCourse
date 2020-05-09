@@ -14,6 +14,9 @@ namespace WebStore.UI.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         public SubCategoryController(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
@@ -51,9 +54,11 @@ namespace WebStore.UI.Areas.Admin.Controllers
                 var doesSubCategoryExists = _applicationDbContext.SubCategory.Include(c => c.Category)
                     .Where(n => n.Name == model.SubCategory.Name && n.Category.Id == model.SubCategory.CategoryId);
 
-                if(doesSubCategoryExists.Count() > 0)
+                if (doesSubCategoryExists.Count() > 0)
                 {
                     //Error
+                    StatusMessage = "Error : Sub Category exists under " + doesSubCategoryExists.First().Category.Name
+                        + " category. Please use another name.";
                 }
                 else
                 {
@@ -67,7 +72,8 @@ namespace WebStore.UI.Areas.Admin.Controllers
                 CategoryList = await _applicationDbContext.Category.ToListAsync(),
                 SubCategory = model.SubCategory,
                 SubCategoryList = await _applicationDbContext.SubCategory.OrderBy(n => n.Name)
-                    .Select(n => n.Name).ToListAsync()
+                    .Select(n => n.Name).ToListAsync(),
+                StatusMessage = StatusMessage
             };
 
             return View(modelVM);
