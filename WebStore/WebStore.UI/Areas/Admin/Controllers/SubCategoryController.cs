@@ -132,7 +132,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
                         + " category. Please use another name.";
                 }
                 else
-                { 
+                {
                     var subCategoryFromDb = await _applicationDbContext.SubCategory.FindAsync(model.SubCategory.Id);
                     subCategoryFromDb.Name = model.SubCategory.Name;
                     await _applicationDbContext.SaveChangesAsync();
@@ -149,6 +149,49 @@ namespace WebStore.UI.Areas.Admin.Controllers
             };
 
             return View(modelVM);
+        }
+
+        //GET - DETAILS
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var subCategory = await _applicationDbContext.SubCategory.Include(c => c.Category)
+                .SingleOrDefaultAsync(i => i.Id == id);
+
+            if (subCategory == null)
+                return NotFound();
+
+            return View(subCategory);
+        }
+
+        //GET - DELETE
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var subCategory = await _applicationDbContext.SubCategory.Include(c => c.Category)
+                .SingleOrDefaultAsync(i => i.Id == id);
+
+            if (subCategory == null)
+                return NotFound();
+
+            return View(subCategory);
+        }
+
+        //POST - DELETE
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            var subCategory = await _applicationDbContext.SubCategory.Include(c => c.Category)
+                .SingleOrDefaultAsync(i => i.Id == id);
+
+            _applicationDbContext.SubCategory.Remove(subCategory);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
