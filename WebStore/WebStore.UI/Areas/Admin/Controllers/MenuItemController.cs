@@ -49,8 +49,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateConfirmed()
         {
             MenuItemVM.MenuItem.SubCategoryId = Convert.ToInt32(Request.Form["SubCategoryId"].ToString());
-            //MenuItemVM.MenuItem.SubCategoryId = int.TryParse(Request.Form["SubCategoryId"].ToString(), MenuItemVM.MenuItem.SubCategoryId);
-
+            
             if (!ModelState.IsValid)
             {
                 return View(MenuItemVM);
@@ -160,6 +159,21 @@ namespace WebStore.UI.Areas.Admin.Controllers
             await _applicationDbContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        //GET - DETAILS
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            MenuItemVM.MenuItem = await _applicationDbContext.MenuItem.Include(c => c.Category)
+                .Include(sc => sc.SubCategory).SingleOrDefaultAsync(i => i.Id == id);
+           
+            if (!ModelState.IsValid)
+                return NotFound();
+            
+            return View(MenuItemVM);
         }
     }
 }
