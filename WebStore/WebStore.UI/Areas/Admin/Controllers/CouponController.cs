@@ -130,5 +130,34 @@ namespace WebStore.UI.Areas.Admin.Controllers
 
             return View(Coupon);
         }
+
+        //GET - DELETE
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            Coupon = await _applicationDbContext.Coupon.SingleOrDefaultAsync(i => i.Id == id);
+
+            if (Coupon == null)
+                return NotFound();
+
+            return View(Coupon);
+        }
+
+        //POST - DELETE
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            if (id == null)
+                return NotFound();
+            Coupon coupon = await _applicationDbContext.Coupon.FindAsync(id);
+            if (coupon == null)
+                return NotFound();
+            _applicationDbContext.Coupon.Remove(coupon);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
