@@ -116,5 +116,19 @@ namespace WebStore.UI.Areas.Admin.Controllers
             Coupon.Picture = couponFromDb.Picture;
             return View(Coupon);
         }
+
+        //GET - DETAILS
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            Coupon = await _applicationDbContext.Coupon.SingleOrDefaultAsync(i => i.Id == id);
+
+            if (Coupon == null)
+                return NotFound();
+
+            return View(Coupon);
+        }
     }
 }
