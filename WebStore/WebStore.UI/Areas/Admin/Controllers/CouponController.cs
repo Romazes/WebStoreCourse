@@ -19,5 +19,11 @@ namespace WebStore.UI.Areas.Admin.Controllers
         {
             return View(await _applicationDbContext.Coupon.ToListAsync());
         }
+
+        //GET - CREATE
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }
