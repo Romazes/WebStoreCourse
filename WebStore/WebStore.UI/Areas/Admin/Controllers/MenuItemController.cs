@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebStore.UI.Data;
+using WebStore.UI.Models;
 using WebStore.UI.Models.ViewModels;
 
 namespace WebStore.UI.Areas.Admin.Controllers
@@ -49,7 +50,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateConfirmed()
         {
             MenuItemVM.MenuItem.SubCategoryId = Convert.ToInt32(Request.Form["SubCategoryId"].ToString());
-            
+
             if (!ModelState.IsValid)
             {
                 return View(MenuItemVM);
@@ -120,7 +121,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
                 MenuItemVM.SubCategory = await _applicationDbContext.SubCategory.Where(c => c.CategoryId == MenuItemVM.MenuItem.CategoryId).ToListAsync();
                 return View(MenuItemVM);
             }
-           
+
             //Work on the image saving section
             string webRootPath = _webHostEnvironment.WebRootPath;
             var files = HttpContext.Request.Form.Files;
@@ -136,7 +137,7 @@ namespace WebStore.UI.Areas.Admin.Controllers
                 //Delete the original file
                 var imagePath = Path.Combine(webRootPath, menuItemFromDb.PictureUri.TrimStart('\\'));
 
-                if(System.IO.File.Exists(imagePath))
+                if (System.IO.File.Exists(imagePath))
                 {
                     System.IO.File.Delete(imagePath);
                 }
@@ -169,11 +170,53 @@ namespace WebStore.UI.Areas.Admin.Controllers
 
             MenuItemVM.MenuItem = await _applicationDbContext.MenuItem.Include(c => c.Category)
                 .Include(sc => sc.SubCategory).SingleOrDefaultAsync(i => i.Id == id);
-           
+
             if (!ModelState.IsValid)
                 return NotFound();
-            
+
             return View(MenuItemVM);
+        }
+
+        //GET - DELETE
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            MenuItemVM.MenuItem = await _applicationDbContext.MenuItem.Include(c => c.Category)
+                .Include(sc => sc.SubCategory).SingleOrDefaultAsync(i => i.Id == id);
+
+            if (!ModelState.IsValid)
+                return NotFound();
+
+            return View(MenuItemVM);
+        }
+
+        //POST - DELETE
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            MenuItem menuItem = await _applicationDbContext.MenuItem.FindAsync(id);
+
+            if (menuItem != null)
+            {
+                //Delete the original file
+                var imagePath = Path.Combine(webRootPath, menuItem.PictureUri.TrimStart('\\'));
+
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+
+                _applicationDbContext.MenuItem.Remove(menuItem);
+                await _applicationDbContext.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }
