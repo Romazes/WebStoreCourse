@@ -42,18 +42,39 @@
 <div class="backgroundWhite container">
     <!--Section with Dynamic Category-->
     <ul id="menu-filters" class="menu-filter-list list-inline text-center">
-        <li class="filter active btn btn-secondary ml-1 mr-1" data-filter="list-shop">Show All</li>
+        <li class="active btn btn-secondary ml-1 mr-1" data-filter=".list-shop">Show All</li>
         @foreach (var category in Model.Category)
         {
-            <li class="filter ml-1 mr-1" data-filter=".@category.Name.Replace(" ",string.Empty)">@category.Name</li>
+            <li class="ml-1 mr-1" data-filter=".@category.Name.Replace(" ",string.Empty)">@category.Name</li>
         }
     </ul>
     <!--Work with item with each Category-->
     @foreach (var category in Model.Category)
     {
         <div class="row" id="menu-wrapper">
-            <partial name="_ThumbnailAreaPartial" 
+            <partial name="_ThumbnailAreaPartial"
                      model="@Model.MenuItem.Where(e => e.Category.Name.Equals(category.Name))" />
         </div>
     }
 </div>
+
+@section Scripts{ 
+<script>
+    var posts = $('.post');
+
+    (function ($) {
+        $("#menu-filters li").click(function () {
+            $("#menu-filters li").removeClass('active btn btn-secondary');
+            $(this).addClass('active btn btn-secondary');
+
+            var selectedFilter = $(this).data("filter");
+
+            $(".list-shop").fadeOut();
+
+            setTimeout(function () {
+                $(selectedFilter).slideDown();
+            }, 300);
+        });
+    })(jQuery);
+</script>
+}
