@@ -42,10 +42,10 @@
 <div class="backgroundWhite container">
     <!--Section with Dynamic Category-->
     <ul id="menu-filters" class="menu-filter-list list-inline text-center">
-        <li class="filter active btn btn-secondary ml-1 mr-1">Show All</li>
+        <li class="filter active btn btn-secondary ml-1 mr-1" data-filter="list-shop">Show All</li>
         @foreach (var category in Model.Category)
         {
-            <li class="filter ml-1 mr-1">@category.Name</li>
+            <li class="filter ml-1 mr-1" data-filter=".@category.Name.Replace(" ",string.Empty)">@category.Name</li>
         }
     </ul>
     <!--Work with item with each Category-->
