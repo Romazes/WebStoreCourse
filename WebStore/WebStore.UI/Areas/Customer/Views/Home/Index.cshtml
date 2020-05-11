@@ -35,3 +35,17 @@
         </div>
     </div>
 }
+
+<br />
+<br />
+
+<div class="backgroundWhite container">
+    <!--Work with item with each Category-->
+    @foreach (var category in Model.Category)
+    {
+        <div class="row" id="menu-wrapper">
+            <partial name="_ThumbnailAreaPartial" 
+                     model="@Model.MenuItem.Where(e => e.Category.Name.Equals(category.Name))" />
+        </div>
+    }
+</div>
