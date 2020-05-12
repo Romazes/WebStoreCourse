@@ -24,7 +24,7 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
-        //private readonly IEmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
@@ -37,7 +37,7 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            //_emailSender = emailSender;
+            _emailSender = emailSender;
             _roleManager = roleManager;
         }
 
@@ -84,12 +84,16 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            //Send role from Form to variable.
+            string role = Request.Form["rdUserRole"].ToString();
+
             returnUrl = returnUrl ?? Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { 
-                    UserName = Input.Email, 
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
                     Email = Input.Email,
                     Name = Input.Name,
                     City = Input.City,
@@ -98,7 +102,7 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    if(!await _roleManager.RoleExistsAsync(StaticDetail.ManagerUser))
+                    if (!await _roleManager.RoleExistsAsync(StaticDetail.ManagerUser))
                     {
                         await _roleManager.CreateAsync(new IdentityRole(StaticDetail.ManagerUser));
                     }
@@ -115,10 +119,34 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
                         await _roleManager.CreateAsync(new IdentityRole(StaticDetail.FrontDeskUser));
                     }
 
-                    //assign specifacl Role for User
-                    await _userManager.AddToRoleAsync(user, StaticDetail.ManagerUser);
+                    if (role == StaticDetail.SupplyUser)
+                    {
+                        await _userManager.AddToRoleAsync(user, StaticDetail.SupplyUser);
+                    }
+                    else
+                    {
+                        if (role == StaticDetail.FrontDeskUser)
+                        {
+                            await _userManager.AddToRoleAsync(user, StaticDetail.FrontDeskUser);
+                        }
+                        else
+                        {
+                            if (role == StaticDetail.ManagerUser)
+                            {
+                                await _userManager.AddToRoleAsync(user, StaticDetail.ManagerUser);
+                            }
+                            else
+                            {
+                                await _userManager.AddToRoleAsync(user, StaticDetail.CustomerEndUser);
+                                await _signInManager.SignInAsync(user, isPersistent: false);
+                                return LocalRedirect(returnUrl);
+                            }
+                        }
+                    }
 
                     _logger.LogInformation("User created a new account with password.");
+
+                    return RedirectToAction("Index", "User", new { area = "Admin" });
 
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -131,15 +159,16 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
                     //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                     //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    //{
+                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
+                    //}
+                    //else
+                    //{
+                    //    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //    return LocalRedirect(returnUrl);
+
+                    //}
                 }
                 foreach (var error in result.Errors)
                 {
