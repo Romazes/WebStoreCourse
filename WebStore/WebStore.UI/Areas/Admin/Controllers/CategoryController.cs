@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading.Tasks;
 using WebStore.UI.Data;
 using WebStore.UI.Models;
+using WebStore.UI.Utility;
 
 namespace WebStore.UI.Areas.Admin.Controllers
 {
+    [Authorize(Roles = StaticDetail.ManagerUser)]
     [Area("Admin")]
     public class CategoryController : Controller
     {

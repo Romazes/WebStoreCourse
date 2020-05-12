@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebStore.UI.Data;
 using WebStore.UI.Models;
 using WebStore.UI.Models.ViewModels;
+using WebStore.UI.Utility;
 
 namespace WebStore.UI.Areas.Admin.Controllers
 {
+    [Authorize(Roles = StaticDetail.ManagerUser)]
     [Area("Admin")]
     public class SubCategoryController : Controller
     {
