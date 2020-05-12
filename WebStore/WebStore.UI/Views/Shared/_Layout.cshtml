@@ -13,7 +13,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebStore.UI</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/icons/tealife-01.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+                    TeaWebShop
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,32 +24,34 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item dropdown text-white-50">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuLink"
-                               role="button" data-toggle="dropdown" aria-haspopup="true"
-                               aria-expanded="false">
-                                Content Management
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropDownMenuLink">
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Category"
-                                   asp-action="Index">
-                                    Category
+                        @if (User.IsInRole(StaticDetail.ManagerUser))
+                        {
+                            <li class="nav-item dropdown text-white-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuLink"
+                                   role="button" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false">
+                                    Content Management
                                 </a>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="SubCategory"
-                                   asp-action="Index">Sub Category</a>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="MenuItem"
-                                   asp-action="Index">MenuItem</a>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Coupon"
-                                   asp-action="Index">Coupons</a>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="User"
-                                   asp-action="Index">Users</a>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropDownMenuLink">
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Category"
+                                       asp-action="Index">
+                                        Category
+                                    </a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="SubCategory"
+                                       asp-action="Index">Sub Category</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="MenuItem"
+                                       asp-action="Index">MenuItem</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Coupon"
+                                       asp-action="Index">Coupons</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="User"
+                                       asp-action="Index">Users</a>
+                                </div>
+                            </li>
+                        }
+                        <li style="color:white">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-shopping-cart"></i> &nbsp; (0)
+                            </a>
                         </li>
                     </ul>
                 </div>
