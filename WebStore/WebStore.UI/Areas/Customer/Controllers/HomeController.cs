@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using WebStore.UI.Data;
 using WebStore.UI.Models;
 using WebStore.UI.Models.ViewModels;
+using WebStore.UI.Utility;
 
 namespace WebStore.UI.Controllers
 {
@@ -39,7 +40,7 @@ namespace WebStore.UI.Controllers
             if(claim != null)
             {
                 var cnt = _applicationDbContext.ShoppingCart.Where(u => u.ApplicationUserId == claim.Value).ToList().Count;
-                HttpContext.Session.SetInt32("startSessionCartCount", cnt);
+                HttpContext.Session.SetInt32(StaticDetail.startSessionShoppingCartCount, cnt);
             }
 
             return View(indexVM);
@@ -87,7 +88,7 @@ namespace WebStore.UI.Controllers
                 await _applicationDbContext.SaveChangesAsync();
 
                 var count = _applicationDbContext.ShoppingCart.Where(c => c.ApplicationUserId == cartObj.ApplicationUserId).ToList().Count();
-                HttpContext.Session.SetInt32("startSessionCartCount", count);
+                HttpContext.Session.SetInt32(StaticDetail.startSessionShoppingCartCount, count);
 
                 return RedirectToAction("Index");
             }

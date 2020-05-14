@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using WebStore.UI.Utility;
 
 namespace WebStore.UI.Areas.Identity.Pages.Account
 {
@@ -30,7 +31,7 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
-            HttpContext.Session.SetInt32("startSessionCartCount", 0);
+            HttpContext.Session.SetInt32(StaticDetail.startSessionShoppingCartCount, 0);
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {

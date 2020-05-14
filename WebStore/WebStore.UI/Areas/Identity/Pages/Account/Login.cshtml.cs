@@ -15,6 +15,7 @@ using WebStore.UI.Data;
 using Microsoft.EntityFrameworkCore;
 using WebStore.UI.Models;
 using Microsoft.AspNetCore.Http;
+using WebStore.UI.Utility;
 
 namespace WebStore.UI.Areas.Identity.Pages.Account
 {
@@ -88,7 +89,7 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
                 {
                     var user = await _applicationDbContext.Users.Where(e => e.Email == Input.Email).FirstOrDefaultAsync();
                     List<ShoppingCart> listShoppingCart = await _applicationDbContext.ShoppingCart.Where(i => i.ApplicationUserId == user.Id).ToListAsync();
-                    HttpContext.Session.SetInt32("startSessionCartCount", listShoppingCart.Count);
+                    HttpContext.Session.SetInt32(StaticDetail.startSessionShoppingCartCount, listShoppingCart.Count);
 
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
