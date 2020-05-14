@@ -28,8 +28,7 @@ namespace WebStore.UI.Models
         [ForeignKey("SubCategoryId")]
         public virtual SubCategory SubCategory { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
         [Range(1, int.MaxValue, ErrorMessage = " Price should be greate than ${1}")]
-        public decimal Price { get; set; }
+        public double Price { get; set; }
     }
 }
