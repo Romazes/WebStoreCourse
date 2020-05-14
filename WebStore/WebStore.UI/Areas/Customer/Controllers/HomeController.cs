@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -31,6 +32,21 @@ namespace WebStore.UI.Controllers
                 Coupon = await _applicationDbContext.Coupon.Where(ca => ca.IsActive == true).ToListAsync()
             };
             return View(indexVM);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Details(int id)
+        {
+            var menuItemFromDb = await _applicationDbContext.MenuItem.Include(c => c.Category)
+                .Include(sc => sc.SubCategory).Where(i => i.Id == id).SingleOrDefaultAsync();
+
+            ShoppingCart cartObj = new ShoppingCart()
+            {
+                MenuItem = menuItemFromDb,
+                MenuItemId = menuItemFromDb.Id
+            };
+
+            return View(cartObj);
         }
 
         public IActionResult Privacy()
