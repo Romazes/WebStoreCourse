@@ -33,6 +33,15 @@ namespace WebStore.UI.Controllers
                 Category = await _applicationDbContext.Category.ToListAsync(),
                 Coupon = await _applicationDbContext.Coupon.Where(ca => ca.IsActive == true).ToListAsync()
             };
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            if(claim != null)
+            {
+                var cnt = _applicationDbContext.ShoppingCart.Where(u => u.ApplicationUserId == claim.Value).ToList().Count;
+                HttpContext.Session.SetInt32("startSessionCartCount", cnt);
+            }
+
             return View(indexVM);
         }
 

@@ -11,23 +11,27 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using WebStore.UI.Data;
+using Microsoft.EntityFrameworkCore;
+using WebStore.UI.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace WebStore.UI.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ApplicationDbContext _applicationDbContext;
 
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager)
+            ApplicationDbContext applicationDbContext)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _applicationDbContext = applicationDbContext;
         }
 
         [BindProperty]
@@ -82,6 +86,10 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var user = await _applicationDbContext.Users.Where(e => e.Email == Input.Email).FirstOrDefaultAsync();
+                    List<ShoppingCart> listShoppingCart = await _applicationDbContext.ShoppingCart.Where(i => i.ApplicationUserId == user.Id).ToListAsync();
+                    HttpContext.Session.SetInt32("startSessionCartCount", listShoppingCart.Count);
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
