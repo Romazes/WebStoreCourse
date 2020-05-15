@@ -73,10 +73,10 @@
                                         <input asp-for="@Model.OrderHeader.CouponCode" id="txtCouponCode" class="form-control" placeholder="coupon code..." />
                                     </div>
                                     <div class="col-5" style="margin-top:2px;">
-                                        <button type="submit" class="btn btn-sm form-control btn-outline-success" id="btnCoupon" asp-action="AddCoupon">
+                                        <button type="submit" class="btn btn-sm form-control btn-outline-success" id="btnAddCoupon" asp-action="AddCoupon">
                                             Apply
                                         </button>
-                                        <button type="submit" class="btn btn-sm form-control btn-outline-danger" style="display:none;" id="btnRemoveCoupon" asp-action="AddCoupon">
+                                        <button type="submit" class="btn btn-sm form-control btn-outline-danger" style="display:none;" id="btnRemoveCoupon" asp-action="RemoveCoupon">
                                             Remove
                                         </button>
                                     </div>
@@ -112,3 +112,20 @@
         <div class="backgroundWhiteBorder">No items added to the shopping cart...</div>
     }
 </form>
+
+@section Scripts{
+<script>
+    $(function () {
+        var couponCode = document.getElementById("txtCouponCode").value;
+
+        if (couponCode.length > 0) {
+            document.getElementById('btnAddCoupon').style.display = 'none';
+            document.getElementById('btnRemoveCoupon').style.display = '';
+        }
+        else {
+            document.getElementById('btnAddCoupon').style.display = '';
+            document.getElementById('btnRemoveCoupon').style.display = 'none';
+        }
+    });
+</script>
+}

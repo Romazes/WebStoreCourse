@@ -46,7 +46,7 @@ namespace WebStore.UI.Areas.Customer.Controllers
                 list.MenuItem = await _applicationDbContext.MenuItem.FirstOrDefaultAsync(i => i.Id == list.MenuItemId);
                 DetailsCart.OrderHeader.OrderTotal = DetailsCart.OrderHeader.OrderTotal + (list.MenuItem.Price * list.Count);
                 list.MenuItem.Description = StaticDetail.ConvertToRawHtml(list.MenuItem.Description);
-                if(list.MenuItem.Description.Length > 100)
+                if (list.MenuItem.Description.Length > 100)
                 {
                     list.MenuItem.Description = list.MenuItem.Description.Substring(0, 99) + "...";
                 }
@@ -68,12 +68,21 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
         public IActionResult AddCoupon()
         {
-            if(DetailsCart.OrderHeader.CouponCode == null)
+            if (DetailsCart.OrderHeader.CouponCode == null)
             {
                 DetailsCart.OrderHeader.CouponCode = string.Empty;
             }
 
             HttpContext.Session.SetString(StaticDetail.startSessionCouponCode, DetailsCart.OrderHeader.CouponCode);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        public IActionResult RemoveCoupon()
+        {
+
+            HttpContext.Session.SetString(StaticDetail.startSessionCouponCode, string.Empty);
 
             return RedirectToAction(nameof(Index));
         }
