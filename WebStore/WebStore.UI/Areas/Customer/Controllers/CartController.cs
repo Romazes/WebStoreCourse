@@ -11,6 +11,7 @@ using WebStore.UI.Utility;
 
 namespace WebStore.UI.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
