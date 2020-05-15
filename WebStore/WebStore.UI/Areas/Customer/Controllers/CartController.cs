@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebStore.UI.Data;
@@ -52,7 +53,29 @@ namespace WebStore.UI.Areas.Customer.Controllers
             }
             DetailsCart.OrderHeader.OrderTotalOriginal = DetailsCart.OrderHeader.OrderTotal;
 
+            if (HttpContext.Session.GetString(StaticDetail.startSessionCouponCode) != null)
+            {
+                DetailsCart.OrderHeader.CouponCode = HttpContext.Session.GetString(StaticDetail.startSessionCouponCode);
+                var couponFromDb = await _applicationDbContext.Coupon
+                    .Where(t => t.Name.ToLower() == DetailsCart.OrderHeader.CouponCode.ToLower())
+                    .FirstOrDefaultAsync();
+                DetailsCart.OrderHeader.OrderTotal = StaticDetail
+                    .DiscountedPrice(couponFromDb, DetailsCart.OrderHeader.OrderTotalOriginal);
+            }
+
             return View(DetailsCart);
+        }
+
+        public IActionResult AddCoupon()
+        {
+            if(DetailsCart.OrderHeader.CouponCode == null)
+            {
+                DetailsCart.OrderHeader.CouponCode = string.Empty;
+            }
+
+            HttpContext.Session.SetString(StaticDetail.startSessionCouponCode, DetailsCart.OrderHeader.CouponCode);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
