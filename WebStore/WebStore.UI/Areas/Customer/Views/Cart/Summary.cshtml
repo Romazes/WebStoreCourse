@@ -1,4 +1,7 @@
 ﻿@model OrderDetailsCart
+
+@inject IOptions<StripeSettings>
+
 @{
     ViewData["Title"] = "Summary";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -113,6 +116,11 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-12 col-md-4 offset-md-8">
+
+                                @{
+                                    var OrderTotalForStripe = Model.OrderHeader.OrderTotal * 100;
+                                }
+
                                 <button type="submit" id="btnPlaceOrder" onclick="return validateInput()"
                                         vlaue="Place Order" class="btn btn-success form-control">
                                     Place Order
