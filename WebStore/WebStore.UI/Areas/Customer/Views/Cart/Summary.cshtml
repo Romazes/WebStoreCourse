@@ -37,7 +37,7 @@
                                             <label>Name</label>
                                         </div>
                                         <div class="col-9">
-                                            <input asp-for="@Model.OrderHeader.PickupName" type="text" class="form-control" />
+                                            <input asp-for="@Model.OrderHeader.PickupName" id="txtName" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -45,7 +45,7 @@
                                             <label>Phone</label>
                                         </div>
                                         <div class="col-9">
-                                            <input asp-for="@Model.OrderHeader.PhoneNumber" type="text" class="form-control" />
+                                            <input asp-for="@Model.OrderHeader.PhoneNumber" id="txtPhone" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -111,7 +111,14 @@
                         </div>
                     </div>
                     <div class="card-footer">
-
+                        <div class="row">
+                            <div class="col-12 col-md-4 offset-md-8">
+                                <button type="submit" id="btnPlaceOrder" onclick="return validateInput()"
+                                        vlaue="Place Order" class="btn btn-success form-control">
+                                    Place Order
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -135,7 +142,7 @@
             }
 
             $("#datepicker").datepicker({ minDate: minDate, maxDate: "+1W" });
-            $("#timepicker").timepicker({ 'minTime': '9:00 AM', 'maxTime':'9:00 PM', step: '30' });
+            $("#timepicker").timepicker({ 'minTime': '9:00 AM', 'maxTime': '9:00 PM', step: '30' });
         });
 
 
@@ -176,6 +183,38 @@
         $('#datepicker').change(function () {
             setPickUpTime();
         });
+
+        function validateInput() {
+            var time = document.getElementById("timepicker").value;
+            var dt = document.getElementById("datepicker").value;
+            var name = document.getElementById("txtName").value;
+            var phone = document.getElementById("txtPhone").value;
+            if (time.toString() == '') {
+                alert("Please select pickup time");
+                return false;
+            }
+            else {
+                if (dt.toString() == '') {
+                    alert("Please select pickup Date");
+                    return false;
+                }
+                else {
+                    if (name.toString() == '') {
+                        alert("Please enter Name");
+                        return false;
+                    }
+                    else {
+                        if (phone.toString() == '') {
+                            alert("Please enter phone number");
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+                }
+            }
+        };
 
     </script>
 } 
