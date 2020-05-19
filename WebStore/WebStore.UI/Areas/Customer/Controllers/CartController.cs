@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebStore.UI.Data;
+using WebStore.UI.Models;
 using WebStore.UI.Models.ViewModels;
 using WebStore.UI.Utility;
 
@@ -65,6 +66,47 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
             return View(DetailsCart);
         }
+
+        public async Task<IActionResult> Summary()
+        {
+            DetailsCart = new OrderDetailsCart()
+            {
+                OrderHeader = new Models.OrderHeader()
+            };
+
+            DetailsCart.OrderHeader.OrderTotal = 0;
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            ApplicationUser applicationUser = await _applicationDbContext.ApplicationUser.Where(i => i.Id == claim.Value).FirstOrDefaultAsync();
+
+            var cart = _applicationDbContext.ShoppingCart.Where(t => t.ApplicationUserId == claim.Value);
+            if (cart != null)
+                DetailsCart.ListCart = cart.ToList();
+
+            foreach (var list in DetailsCart.ListCart)
+            {
+                list.MenuItem = await _applicationDbContext.MenuItem.FirstOrDefaultAsync(i => i.Id == list.MenuItemId);
+                DetailsCart.OrderHeader.OrderTotal = DetailsCart.OrderHeader.OrderTotal + (list.MenuItem.Price * list.Count);
+            }
+            DetailsCart.OrderHeader.OrderTotalOriginal = DetailsCart.OrderHeader.OrderTotal;
+            DetailsCart.OrderHeader.PickupName = applicationUser.Name;
+            DetailsCart.OrderHeader.PhoneNumber = applicationUser.PhoneNumber;
+            DetailsCart.OrderHeader.PickUpTime = DateTime.Now;
+
+            if (HttpContext.Session.GetString(StaticDetail.startSessionCouponCode) != null)
+            {
+                DetailsCart.OrderHeader.CouponCode = HttpContext.Session.GetString(StaticDetail.startSessionCouponCode);
+                var couponFromDb = await _applicationDbContext.Coupon
+                    .Where(t => t.Name.ToLower() == DetailsCart.OrderHeader.CouponCode.ToLower())
+                    .FirstOrDefaultAsync();
+                DetailsCart.OrderHeader.OrderTotal = StaticDetail
+                    .DiscountedPrice(couponFromDb, DetailsCart.OrderHeader.OrderTotalOriginal);
+            }
+
+            return View(DetailsCart);
+        }
+
 
         public IActionResult AddCoupon()
         {
