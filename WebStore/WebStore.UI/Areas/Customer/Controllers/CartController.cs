@@ -86,5 +86,47 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Plus(int cartId)
+        {
+            var cart = await _applicationDbContext.ShoppingCart.SingleOrDefaultAsync(i => i.Id == cartId);
+            cart.Count += 1;
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Minus(int cartId)
+        {
+            var cart = await _applicationDbContext.ShoppingCart.SingleOrDefaultAsync(i => i.Id == cartId);
+            if (cart.Count == 1)
+            {
+                _applicationDbContext.ShoppingCart.Remove(cart);
+                await _applicationDbContext.SaveChangesAsync();
+
+                var cnt = _applicationDbContext.ShoppingCart.Where(u => u.ApplicationUserId == cart.ApplicationUserId)
+                    .ToList().Count;
+                HttpContext.Session.SetInt32(StaticDetail.startSessionShoppingCartCount, cnt);
+            }
+            else
+            {
+                cart.Count -= 1;
+                await _applicationDbContext.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Remove(int cartId)
+        {
+            var cart = await _applicationDbContext.ShoppingCart.SingleOrDefaultAsync(i => i.Id == cartId);
+
+            _applicationDbContext.ShoppingCart.Remove(cart);
+            await _applicationDbContext.SaveChangesAsync();
+
+            var cnt = _applicationDbContext.ShoppingCart.Where(u => u.ApplicationUserId == cart.ApplicationUserId)
+                .ToList().Count;
+            HttpContext.Session.SetInt32(StaticDetail.startSessionShoppingCartCount, cnt);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
