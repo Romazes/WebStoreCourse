@@ -17,6 +17,10 @@
         "jquery-ui.js",
         "jquery-ui.css"
       ]
+    },
+    {
+      "library": "jquery-timepicker@1.10.0",
+      "destination": "wwwroot/lib/jquery-timepicker/"
     }
   ]
 }

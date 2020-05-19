@@ -124,9 +124,58 @@
 </form>
 
 @section Scripts{
+    <script src="~/lib/jquery-timepicker/jquery.timepicker.min.js"></script>
+
     <script>
         $(function () {
-            $("#datepicker").datepicker({ minDate: 0, maxDate: "+1W" });
+
+            var minDate = 0;
+            if (getTimeFromCurrentDate() >= "19:00") {
+                minDate = 1;
+            }
+
+            $("#datepicker").datepicker({ minDate: minDate, maxDate: "+1W" });
+            $("#timepicker").timepicker({ 'minTime': '9:00 AM', 'maxTime':'9:00 PM', step: '30' });
         });
+
+
+        function setPickUpTime() {
+            var dateSelected = document.getElementById("datepicker").value;
+            var dt = new Date(dateSelected);
+            var today = new Date();
+
+            dt.setHours(0, 0, 0, 0);
+            if (dt > today) {
+                selectedTime = '9:00am';
+            }
+            else {
+                selectedTime = getTimeFromCurrentDate();
+            }
+
+            $('#timepicker').timepicker('option', 'minTime', selectedTime);
+        }
+
+        function getTimeFromCurrentDate() {
+            var curDate = new Date();
+
+            var minTime = "";
+            if (curDate.getHours() < 9) {
+                minTime = '10:00pm';
+            }
+            else {
+                if (curDate.getMinutes() < 30) {
+                    minTime = (curDate.getHours() + 1).toString() + ':30pm';
+                }
+                else {
+                    minTime = (curDate.getHours() + 2).toString() + ':00pm';
+                }
+            }
+            return minTime;
+        }
+
+        $('#datepicker').change(function () {
+            setPickUpTime();
+        });
+
     </script>
-}
+} 
