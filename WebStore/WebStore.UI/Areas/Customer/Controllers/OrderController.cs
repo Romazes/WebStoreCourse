@@ -127,5 +127,35 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
             return PartialView("_IndividualOrderDetails", orderDetailsViewModel);
         }
+
+        [Authorize(Roles = StaticDetail.SupplyUser + "," + StaticDetail.ManagerUser)]
+        public async Task<IActionResult> OrderPrepare(int OrderId)
+        {
+            OrderHeader orderHeader = await _applicationDbContext.OrderHeader.FindAsync(OrderId);
+            orderHeader.Status = StaticDetail.StatusInProcess;
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction("ManageOrder", "Order");
+        }
+
+        [Authorize(Roles = StaticDetail.SupplyUser + "," + StaticDetail.ManagerUser)]
+        public async Task<IActionResult> OrderReady(int OrderId)
+        {
+            OrderHeader orderHeader = await _applicationDbContext.OrderHeader.FindAsync(OrderId);
+            orderHeader.Status = StaticDetail.StatusReady;
+            await _applicationDbContext.SaveChangesAsync();
+
+            //Email logic to notify user that order is ready for pickup
+
+            return RedirectToAction("ManageOrder", "Order");
+        }
+
+        [Authorize(Roles = StaticDetail.SupplyUser + "," + StaticDetail.ManagerUser)]
+        public async Task<IActionResult> OrderCancel(int OrderId)
+        {
+            OrderHeader orderHeader = await _applicationDbContext.OrderHeader.FindAsync(OrderId);
+            orderHeader.Status = StaticDetail.StatusCancelled;
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction("ManageOrder", "Order");
+        }
     }
 }
