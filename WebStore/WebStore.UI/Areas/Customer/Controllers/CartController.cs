@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using WebStore.UI.Data;
 using WebStore.UI.Models;
 using WebStore.UI.Models.ViewModels;
@@ -110,7 +111,7 @@ namespace WebStore.UI.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Summary")]
-        public async Task<IActionResult> SummaryConfirmed()
+        public async Task<IActionResult> SummaryConfirmed(string stripeToken)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -163,6 +164,35 @@ namespace WebStore.UI.Areas.Customer.Controllers
             HttpContext.Session.SetInt32(StaticDetail.startSessionShoppingCartCount, 0);
             await _applicationDbContext.SaveChangesAsync();
 
+            var options = new ChargeCreateOptions
+            {
+                Amount = Convert.ToInt32(DetailsCart.OrderHeader.OrderTotal * 100),
+                Currency = "uah",
+                Description = "Order Id: " + DetailsCart.OrderHeader.Id,
+                Source = stripeToken
+            };
+            var service = new ChargeService();
+            Charge charge = service.Create(options);
+
+            if(charge.BalanceTransactionId == null)
+            {
+                DetailsCart.OrderHeader.PaymentStatus = StaticDetail.PaymentStatusRejected;
+            }
+            else
+            {
+                DetailsCart.OrderHeader.TransactionId = charge.BalanceTransactionId;
+            }
+            if (charge.Status.ToLower() == "succeeded")
+            {
+                DetailsCart.OrderHeader.PaymentStatus = StaticDetail.PaymentStatusApproved;
+                DetailsCart.OrderHeader.Status = StaticDetail.StatusSubmitted;
+            }
+            else
+            {
+                DetailsCart.OrderHeader.PaymentStatus = StaticDetail.PaymentStatusRejected;
+            }
+
+            await _applicationDbContext.SaveChangesAsync();
 
             //return RedirectToAction("Confirm", "Order", new { id = DetailsCart.OrderHeader.Id });
             return RedirectToAction("Index", "Home");
