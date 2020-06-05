@@ -1,6 +1,5 @@
 ﻿@model OrderDetailsCart
-
-@inject IOptions<StripeSettings>
+@inject IOptions<StripeSettings> Stripe
 
 @{
     ViewData["Title"] = "Summary";
@@ -118,9 +117,22 @@
                             <div class="col-12 col-md-4 offset-md-8">
 
                                 @{
-                                    var OrderTotalForStripe = Model.OrderHeader.OrderTotal * 100;
+                                var OrderTotalForStripe = Model.OrderHeader.OrderTotal * 100;
                                 }
-
+                                <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                        data-key="@Stripe.Value.PublishableKey"
+                                        data-amount="@OrderTotalForStripe"
+                                        data-name="Tea Store"
+                                        data-description="Tasty Tea for everyone."
+                                        data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                                        data-locale="auto"
+                                        data-label="Place Order"
+                                        data-allow-remember-me="false"
+                                        >
+                                </script>
+                                <script>
+                                    document.getElementsByClassName("stripe-button-el")[0].style.display = 'none';
+                                </script>
                                 <button type="submit" id="btnPlaceOrder" onclick="return validateInput()"
                                         vlaue="Place Order" class="btn btn-success form-control">
                                     Place Order
