@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WebStore.UI.Data;
 using WebStore.UI.Models;
 using WebStore.UI.Models.ViewModels;
+using WebStore.UI.Utility;
 
 namespace WebStore.UI.Areas.Customer.Controllers
 {
@@ -89,6 +90,28 @@ namespace WebStore.UI.Areas.Customer.Controllers
             };
 
             return View(orderListVM);
+        }
+
+        [Authorize(Roles=StaticDetail.SupplyUser + "," + StaticDetail.ManagerUser)]
+        public async Task<IActionResult> ManageOrder()
+        {
+            List<OrderDetailsViewModel> orderDetailsVM = new List<OrderDetailsViewModel>();
+            
+
+            List<OrderHeader> OrderHeaderList = await _applicationDbContext.OrderHeader
+                .Where(s => s.Status == StaticDetail.StatusSubmitted || s.Status == StaticDetail.StatusInProcess)
+                .OrderByDescending(o => o.PickUpTime).ToListAsync();
+
+            foreach (OrderHeader item in OrderHeaderList)
+            {
+                OrderDetailsViewModel individual = new OrderDetailsViewModel
+                {
+                    OrderHeader = item,
+                    OrderDetails = await _applicationDbContext.OrderDetails.Where(o => o.OrderId == item.Id).ToListAsync()
+                };
+                orderDetailsVM.Add(individual);
+            }
+            return View(orderDetailsVM.OrderBy(o => o.OrderHeader.PickUpTime));
         }
 
         public async Task<IActionResult> GetOrderDetails(int Id)

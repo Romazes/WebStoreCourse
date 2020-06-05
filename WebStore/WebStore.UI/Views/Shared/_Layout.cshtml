@@ -61,6 +61,33 @@
                             </li>
                         }
 
+                        @if (User.IsInRole(StaticDetail.SupplyUser) ||
+                          User.IsInRole(StaticDetail.ManagerUser) ||
+                          User.IsInRole(StaticDetail.ManagerUser))
+                        {
+                            <li class="nav-item dropdown text-white-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown"
+                                   role="button" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false">
+                                    Order
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropDownMenuLink">
+                                    @if (User.IsInRole(StaticDetail.SupplyUser) || User.IsInRole(StaticDetail.ManagerUser))
+                                    {
+                                        <a class="dropdown-item" asp-area="Customer" asp-controller="Order"
+                                           asp-action="ManageOrder">
+                                            Manage Order
+                                        </a>
+                                    }
+                                    @if (User.IsInRole(StaticDetail.SupplyUser) || User.IsInRole(StaticDetail.ManagerUser))
+                                    {
+                                        <a class="dropdown-item" asp-area="Customer" asp-controller="Order"
+                                           asp-action="OrderPickup">Order Pickup</a>
+                                    }
+                                </div>
+                            </li>
+                        }
+
                         @if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetail.startSessionShoppingCartCount) != null)
                         {
                             <li style="color:white">
