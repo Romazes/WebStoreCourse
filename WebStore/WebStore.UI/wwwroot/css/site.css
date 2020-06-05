@@ -121,3 +121,31 @@ body {
         background-color: #545b62;
         color: #fff;
     }
+
+    /*Modal dialog for history Order*/
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 70%;
+        margin: 1.75rem auto;
+    }
+
+    .modal-dialog-scrollable {
+        max-height: calc(100% - 3.5rem);
+    }
+
+        .modal-dialog-scrollable .modal-content {
+            max-height: calc(100vh - 3.5rem);
+        }
+
+    .modal-dialog-centered {
+        min-height: calc(100% - 3.5rem);
+    }
+
+        .modal-dialog-centered::before {
+            height: calc(100vh - 3.5rem);
+        }
+
+    .modal-sm {
+        max-width: 300px;
+    }
+}
