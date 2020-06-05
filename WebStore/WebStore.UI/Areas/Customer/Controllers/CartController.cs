@@ -194,8 +194,8 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
             await _applicationDbContext.SaveChangesAsync();
 
-            //return RedirectToAction("Confirm", "Order", new { id = DetailsCart.OrderHeader.Id });
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Confirm", "Order", new { id = DetailsCart.OrderHeader.Id });
+            //return RedirectToAction("Index", "Home");
         }
 
 
