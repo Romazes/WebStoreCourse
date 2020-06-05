@@ -15,6 +15,7 @@ namespace WebStore.UI.Areas.Customer.Controllers
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private int PageSize = 2;
 
         public OrderController(ApplicationDbContext applicationDbContext)
         {
@@ -45,12 +46,15 @@ namespace WebStore.UI.Areas.Customer.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> OrderHistory()
+        public async Task<IActionResult> OrderHistory(int productPage = 1)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            List<OrderDetailsViewModel> orderList = new List<OrderDetailsViewModel>();
+            OrderListViewModel orderListVM = new OrderListViewModel()
+            {
+                Orders = new List<OrderDetailsViewModel>()
+            };
 
             List<OrderHeader> OrderHeaderList = await _applicationDbContext.OrderHeader
                 .Include(a => a.ApplicationUser).Where(u => u.UserId == claim.Value).ToListAsync();
@@ -62,10 +66,22 @@ namespace WebStore.UI.Areas.Customer.Controllers
                     OrderHeader = item,
                     OrderDetails = await _applicationDbContext.OrderDetails.Where(o => o.OrderId == item.Id).ToListAsync()
                 };
-                orderList.Add(individual);
+                orderListVM.Orders.Add(individual);
             }
 
-            return View(orderList);
+            var amountOfOrders = orderListVM.Orders.Count;
+            orderListVM.Orders = orderListVM.Orders.OrderByDescending(p => p.OrderHeader.Id)
+                .Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
+
+            orderListVM.PagingInfo = new PagingInfo
+            {
+                CurrentPage = productPage,
+                ItemsPerPage = PageSize,
+                TotalItem = amountOfOrders,
+                UrlParam = "/Customer/Order/OrderHistory?productPage=:"
+            };
+
+            return View(orderListVM);
         }
 
         public async Task<IActionResult> GetOrderDetails(int Id)
@@ -75,7 +91,7 @@ namespace WebStore.UI.Areas.Customer.Controllers
                 OrderHeader = await _applicationDbContext.OrderHeader.FirstOrDefaultAsync(i => i.Id == Id),
                 OrderDetails = await _applicationDbContext.OrderDetails.Where(o => o.OrderId == Id).ToListAsync()
             };
-            orderDetailsViewModel.OrderHeader.ApplicationUser 
+            orderDetailsViewModel.OrderHeader.ApplicationUser
                 = await _applicationDbContext.ApplicationUser
                 .FirstOrDefaultAsync(i => i.Id == orderDetailsViewModel.OrderHeader.UserId);
 
