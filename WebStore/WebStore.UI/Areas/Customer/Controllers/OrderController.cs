@@ -67,5 +67,19 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
             return View(orderList);
         }
+
+        public async Task<IActionResult> GetOrderDetails(int Id)
+        {
+            OrderDetailsViewModel orderDetailsViewModel = new OrderDetailsViewModel()
+            {
+                OrderHeader = await _applicationDbContext.OrderHeader.FirstOrDefaultAsync(i => i.Id == Id),
+                OrderDetails = await _applicationDbContext.OrderDetails.Where(o => o.OrderId == Id).ToListAsync()
+            };
+            orderDetailsViewModel.OrderHeader.ApplicationUser 
+                = await _applicationDbContext.ApplicationUser
+                .FirstOrDefaultAsync(i => i.Id == orderDetailsViewModel.OrderHeader.UserId);
+
+            return PartialView("_IndividualOrderDetails", orderDetailsViewModel);
+        }
     }
 }
