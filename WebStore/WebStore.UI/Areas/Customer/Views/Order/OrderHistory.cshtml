@@ -39,29 +39,36 @@
                     <th>
                         Total Items
                     </th>
+                    <th></th>
                 </tr>
                 @foreach (var item in Model)
                 {
-            <tr>
-                <td>
-                    @Html.DisplayFor(n => item.OrderHeader.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(n => item.OrderHeader.PickupName)
-                </td>
-                <td>
-                    @Html.DisplayFor(n => item.OrderHeader.ApplicationUser.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(n => item.OrderHeader.PickUpTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(n => item.OrderHeader.OrderTotal)
-                </td>
-                <td>
-                    @Html.DisplayFor(n => item.OrderDetails.Count)
-                </td>
-            </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(n => item.OrderHeader.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(n => item.OrderHeader.PickupName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(n => item.OrderHeader.ApplicationUser.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(n => item.OrderHeader.PickUpTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(n => item.OrderHeader.OrderTotal)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(n => item.OrderDetails.Count)
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-success anchorDetail"
+                                    data-id="@item.OrderHeader.Id" data-toggle="modal">
+                                <i class="far fa-list-alt"></i> Details
+                            </button>
+                        </td>
+                    </tr>
                 }
             </table>
         }
@@ -70,4 +77,23 @@
             <p>No category exists... <i class="far fa-frown-open"></i></p>
         }
     </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" archive="dialog" aria-hidden="true">
+     <div class="modal-dialog-centered modal-dialog" role="document">
+         <div class="modal-content">
+             <div class="modal-header bg-success text-light justify-content-center">
+                 <h5 class="modal-title">Order Details</h5>
+             </div>
+
+             <div class="modal-body justify-content-center" id="myModalContent">
+
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="modal">
+                     Close
+                 </button>
+             </div>
+         </div>
+     </div>
 </div>
