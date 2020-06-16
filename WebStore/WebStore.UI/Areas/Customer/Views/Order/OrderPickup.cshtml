@@ -4,9 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<form method="post">
-
-
+<form method="get">
     <br />
     <br />
     <h2 class="text-info">Orders Ready for Pickup: </h2>
@@ -103,29 +101,29 @@
             }
         </div>
     </div>
-
-    <div class="modal fade" id="myModal" tabindex="-1" archive="dialog" aria-hidden="true">
-        <div class="modal-dialog-centered modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-light">
-                    <div class="col-10 offset-1">
-                        <center>
-                            <h5 class="modal-title">Order Details</h5>
-                        </center>
-                    </div>
-                    <div class="col-1">
-                        <button type="button" class="float-right btn-outline-secondary close"
-                                data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+</form>
+<div class="modal fade" id="myModal" tabindex="-1" archive="dialog" aria-hidden="true">
+    <div class="modal-dialog-centered modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-light">
+                <div class="col-10 offset-1">
+                    <center>
+                        <h5 class="modal-title">Order Details</h5>
+                    </center>
                 </div>
-                <div class="modal-body justify-content-center" id="myModalContent">
+                <div class="col-1">
+                    <button type="button" class="float-right btn-outline-secondary close"
+                            data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+            </div>
+            <div class="modal-body justify-content-center" id="myModalContent">
             </div>
         </div>
     </div>
-</form>
+</div>
+
 
 @section Scripts
 {

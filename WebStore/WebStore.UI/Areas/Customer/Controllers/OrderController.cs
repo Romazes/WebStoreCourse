@@ -256,5 +256,16 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
             return View(orderListVM);
         }
+
+        [Authorize(Roles = StaticDetail.FrontDeskUser + "," + StaticDetail.ManagerUser)]
+        [HttpPost]
+        [ActionName("OrderPickup")]
+        public async Task<IActionResult> OrderPickupPost(int orderId)
+        {
+            OrderHeader orderHeader = await _applicationDbContext.OrderHeader.FindAsync(orderId);
+            orderHeader.Status = StaticDetail.StatusCompleted;
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction("OrderPickup", "Order");
+        }
     }
 }
