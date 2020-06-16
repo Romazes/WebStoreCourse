@@ -102,22 +102,6 @@ namespace WebStore.UI.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    if (!await _roleManager.RoleExistsAsync(StaticDetail.ManagerUser))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetail.ManagerUser));
-                    }
-                    if (!await _roleManager.RoleExistsAsync(StaticDetail.CustomerEndUser))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetail.CustomerEndUser));
-                    }
-                    if (!await _roleManager.RoleExistsAsync(StaticDetail.SupplyUser))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetail.SupplyUser));
-                    }
-                    if (!await _roleManager.RoleExistsAsync(StaticDetail.FrontDeskUser))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetail.FrontDeskUser));
-                    }
 
                     if (role == StaticDetail.SupplyUser)
                     {
