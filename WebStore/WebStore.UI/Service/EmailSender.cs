@@ -28,7 +28,7 @@ namespace WebStore.UI.Service
             var client = new SendGridClient(sendGridKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("admin@meta.ua", "CHA SHI FU SHOP"),
+                From = new EmailAddress("admin@chashifu.ua", "CHA SHI FU SHOP"),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message

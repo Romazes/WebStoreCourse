@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
@@ -19,14 +20,16 @@ namespace WebStore.UI.Areas.Customer.Controllers
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IEmailSender _emailSender;
 
         [BindProperty]
         public OrderDetailsCart DetailsCart { get; set; }
 
-        public CartController(ApplicationDbContext applicationDbContext)
+        public CartController(ApplicationDbContext applicationDbContext, IEmailSender emailSender)
         {
             _applicationDbContext = applicationDbContext;
-        }
+            _emailSender = emailSender;
+    }
 
         public async Task<IActionResult> Index()
         {
@@ -185,6 +188,12 @@ namespace WebStore.UI.Areas.Customer.Controllers
             }
             if (charge.Status.ToLower() == "succeeded")
             {
+                //email for successful order
+                await _emailSender.SendEmailAsync(_applicationDbContext.Users
+                                              .Where(i => i.Id == claim.Value).FirstOrDefault().Email,
+                                              "CHA SHI FU - Order Created" + DetailsCart.OrderHeader.Id.ToString(),
+                                              "Order has been submitted successfully.");
+
                 DetailsCart.OrderHeader.PaymentStatus = StaticDetail.PaymentStatusApproved;
                 DetailsCart.OrderHeader.Status = StaticDetail.StatusSubmitted;
             }
