@@ -75,7 +75,7 @@
                             @(details.Price * details.Count)
                         </span>
                     </li>
-                 }
+                }
                 @if (Model.OrderHeader.CouponCode != null)
                 {
                     <li class="list-group-item d-flex justify-content-between">
@@ -87,16 +87,27 @@
                             @(Model.OrderHeader.OrderTotalOriginal - Model.OrderHeader.OrderTotal)
                         </span>
                     </li>
-                 }
+                }
                 <li class="list-group-item d-flex justify-content-between bg-light">
                     <span class="text-info">Total (UAH)</span>
                     <strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
                 </li>
             </ul>
 
-            <button type="submit" disabled class="btn btn-info form-control">
-                @Model.OrderHeader.Status
-            </button>
+            @if (Model.OrderHeader.Status.Equals(StaticDetail.StatusReady)
+                                           && (User.IsInRole(StaticDetail.ManagerUser)
+                                           || User.IsInRole(StaticDetail.FrontDeskUser)))
+            {
+                <button type="submit" class="btn btn-success form-control">
+                    <i class="far fa-thumbs-up"> Confirm Pickup</i>
+                </button>
+            }
+            else
+            {
+                <button type="submit" disabled class="btn btn-info form-control">
+                    @Model.OrderHeader.Status
+                </button>
+            }
         </div>
     </div>
 </form>
