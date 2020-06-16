@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebStore.UI.Data;
@@ -16,12 +17,14 @@ namespace WebStore.UI.Areas.Customer.Controllers
     [Area("Customer")]
     public class OrderController : Controller
     {
+        private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _applicationDbContext;
         private int PageSize = 2;
 
-        public OrderController(ApplicationDbContext applicationDbContext)
+        public OrderController(ApplicationDbContext applicationDbContext, IEmailSender emailSender)
         {
             _applicationDbContext = applicationDbContext;
+            _emailSender = emailSender;
         }
 
         [Authorize]
@@ -146,6 +149,11 @@ namespace WebStore.UI.Areas.Customer.Controllers
             await _applicationDbContext.SaveChangesAsync();
 
             //Email logic to notify user that order is ready for pickup
+            await _emailSender.SendEmailAsync(_applicationDbContext.Users
+                                          .Where(i => i.Id == orderHeader.UserId).FirstOrDefault().Email,
+                                          "CHA SHI FU - Order Ready for Pickup" + orderHeader.Id.ToString(),
+                                          "Order is ready for pickup.");
+
 
             return RedirectToAction("ManageOrder", "Order");
         }
@@ -156,6 +164,13 @@ namespace WebStore.UI.Areas.Customer.Controllers
             OrderHeader orderHeader = await _applicationDbContext.OrderHeader.FindAsync(OrderId);
             orderHeader.Status = StaticDetail.StatusCancelled;
             await _applicationDbContext.SaveChangesAsync();
+
+            //email for order will cancel.
+            await _emailSender.SendEmailAsync(_applicationDbContext.Users
+                                          .Where(i => i.Id == orderHeader.UserId).FirstOrDefault().Email,
+                                          "CHA SHI FU - Order Cancelled" + orderHeader.Id.ToString(),
+                                          "Order has been cancelled successfully.");
+
             return RedirectToAction("ManageOrder", "Order");
         }
 
@@ -265,6 +280,12 @@ namespace WebStore.UI.Areas.Customer.Controllers
             OrderHeader orderHeader = await _applicationDbContext.OrderHeader.FindAsync(orderId);
             orderHeader.Status = StaticDetail.StatusCompleted;
             await _applicationDbContext.SaveChangesAsync();
+
+            await _emailSender.SendEmailAsync(_applicationDbContext.Users
+                                          .Where(i => i.Id == orderHeader.UserId).FirstOrDefault().Email,
+                                          "CHA SHI FU - Order Completed." + orderHeader.Id.ToString(),
+                                          "Order has been completed successfully.");
+
             return RedirectToAction("OrderPickup", "Order");
         }
     }

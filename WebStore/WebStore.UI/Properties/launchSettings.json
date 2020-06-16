@@ -1,7 +1,7 @@
-﻿{
+{
   "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:52481",
       "sslPort": 44373
@@ -12,16 +12,17 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "SENDEMAILDEMO_ENVIRONMENT_SENDGRID_KEY": "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",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "WebStore.UI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
   }
 }

@@ -35,6 +35,7 @@ namespace WebStore.UI.Service
             };
 
             msg.AddTo(new EmailAddress(email));
+
             try
             {
                 return client.SendEmailAsync(msg);
