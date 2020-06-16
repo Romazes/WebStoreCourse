@@ -93,11 +93,11 @@ namespace WebStore.UI.Areas.Customer.Controllers
             return View(orderListVM);
         }
 
-        [Authorize(Roles=StaticDetail.SupplyUser + "," + StaticDetail.ManagerUser)]
+        [Authorize(Roles = StaticDetail.SupplyUser + "," + StaticDetail.ManagerUser)]
         public async Task<IActionResult> ManageOrder()
         {
             List<OrderDetailsViewModel> orderDetailsVM = new List<OrderDetailsViewModel>();
-            
+
 
             List<OrderHeader> OrderHeaderList = await _applicationDbContext.OrderHeader
                 .Where(s => s.Status == StaticDetail.StatusSubmitted || s.Status == StaticDetail.StatusInProcess)
@@ -160,7 +160,7 @@ namespace WebStore.UI.Areas.Customer.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> OrderPickup(int productPage = 1)
+        public async Task<IActionResult> OrderPickup(int productPage = 1, string searchName = null, string searchPhone = null, string searchEmail = null)
         {
             //var claimsIdentity = (ClaimsIdentity)User.Identity;
             //var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -172,9 +172,64 @@ namespace WebStore.UI.Areas.Customer.Controllers
 
             StringBuilder param = new StringBuilder();
             param.Append("/Customer/Order/OrderPickup?productPage=:");
+            param.Append("&searchName=");
+            if (searchName != null)
+            {
+                param.Append(searchName);
+            }
+            param.Append("&searchPhone=");
+            if (searchPhone != null)
+            {
+                param.Append(searchPhone);
+            }
+            param.Append("&searchEmail=");
+            if (searchEmail != null)
+            {
+                param.Append(searchEmail);
+            }
 
-            List<OrderHeader> OrderHeaderList = await _applicationDbContext.OrderHeader
-                .Include(a => a.ApplicationUser).Where(u => u.Status == StaticDetail.StatusReady).ToListAsync();
+            List<OrderHeader> OrderHeaderList = new List<OrderHeader>();
+
+            if (searchName != null || searchPhone != null || searchEmail != null)
+            {
+                var user = new ApplicationUser();
+
+                if (searchName != null)
+                {
+                    OrderHeaderList = await _applicationDbContext.OrderHeader
+                        .Include(a => a.ApplicationUser)
+                        .Where(u => u.PickupName.ToLower().Contains(searchName.ToLower()))
+                        .OrderByDescending(d => d.OrderDate).ToListAsync();
+                }
+                else
+                {
+                    if (searchEmail != null)
+                    {
+                        user = await _applicationDbContext.ApplicationUser
+                            .Where(u => u.Email.ToLower().Contains(searchEmail.ToLower()))
+                            .FirstOrDefaultAsync();
+                        OrderHeaderList = await _applicationDbContext.OrderHeader
+                            .Include(a => a.ApplicationUser)
+                            .Where(o => o.UserId == user.Id)
+                            .OrderByDescending(d => d.OrderDate).ToListAsync();
+                    }
+                    else
+                    {
+                        if (searchPhone != null)
+                        {
+                            OrderHeaderList = await _applicationDbContext.OrderHeader
+                                .Include(a => a.ApplicationUser)
+                                .Where(u => u.PhoneNumber.Contains(searchPhone))
+                                .OrderByDescending(d => d.OrderDate).ToListAsync();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                OrderHeaderList = await _applicationDbContext.OrderHeader
+                     .Include(a => a.ApplicationUser).Where(u => u.Status == StaticDetail.StatusReady).ToListAsync();
+            }
 
             foreach (OrderHeader item in OrderHeaderList)
             {
@@ -186,12 +241,13 @@ namespace WebStore.UI.Areas.Customer.Controllers
                 orderListVM.Orders.Add(individual);
             }
 
+
             var amountOfOrders = orderListVM.Orders.Count;
             orderListVM.Orders = orderListVM.Orders.OrderByDescending(p => p.OrderHeader.Id)
                 .Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
 
             orderListVM.PagingInfo = new PagingInfo
-            { 
+            {
                 CurrentPage = productPage,
                 ItemsPerPage = PageSize,
                 TotalItem = amountOfOrders,
