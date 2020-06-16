@@ -36,6 +36,14 @@ namespace WebStore.UI
 
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
+
+            services.AddAuthentication().AddFacebook(facebookOpt =>
+            {
+                facebookOpt.AppId = "3366674443345077";
+                facebookOpt.AppSecret = "c8104b43302e4133b923f6a369c2eb83";
+
+            });
+
             services.AddSession(options =>
             {
                 options.Cookie.IsEssential = true;
