@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebStore.UI.Utility;
 using Stripe;
+using WebStore.UI.Service;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace WebStore.UI
 {
@@ -33,6 +35,9 @@ namespace WebStore.UI
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
+            
+            services.AddSingleton<IEmailSender, EmailSender>();
+            services.Configure<EmailOptions>(Configuration);
 
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
