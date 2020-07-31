@@ -21,6 +21,10 @@
     {
       "library": "jquery-timepicker@1.10.0",
       "destination": "wwwroot/lib/jquery-timepicker/"
+    },
+    {
+      "library": "popper.js@1.14.3",
+      "destination": "wwwroot/popper.js/"
     }
   ]
 }
